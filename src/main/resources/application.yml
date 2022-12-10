@@ -17,3 +17,9 @@ spring:
       ddl-auto: create
     properties:
       hibernate.format_sql: true
+
+# thymeleaf
+  thymeleaf:
+    prefix : classpath:templates/
+    suffix : .html
+    cache : false
