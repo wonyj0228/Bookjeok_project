@@ -1,0 +1,28 @@
+body {
+    padding-top: 15rem;
+}
+
+.input-group-addon {
+    padding-right: 7px;
+    padding-top: 6px;
+}
+
+h1.title{
+    font-size: 50px;
+    font-family: 'Kaushan Script', cursive;
+    font-weight: 400;
+}
+
+
+.login-button{
+    margin-top: 5px;
+}
+
+.login-register{
+    font-size: 17px;
+    text-align: center;
+}
+
+.login-register a {
+    padding-right: 20px;
+}
