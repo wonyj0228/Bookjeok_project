@@ -1,8 +1,10 @@
 package com.myproject.bookjeok_project.domain;
 
 
+import com.myproject.bookjeok_project.dto.UserAccountDto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Objects;
 
@@ -31,6 +33,17 @@ public class UserAccount {
 
     public static UserAccount of (String email, String userPassword, String name, String nickname) {
         return new UserAccount(email, userPassword, name, nickname);
+    }
+
+    // static method = class domain 객체가 생성되어 있지않아도 class명.method 로 해당 메서드를 호출할 수 있다.
+    // 일반 메서드 = domian객체명.method임
+    public static UserAccount createAccount(UserAccountDto userAccountDto, PasswordEncoder passwordEncoder) {
+        return new UserAccount(
+                userAccountDto.getEmail(),
+                passwordEncoder.encode(userAccountDto.getUserPassword()),
+                userAccountDto.getName(),
+                userAccountDto.getNickname()
+        );
     }
 
     @Override

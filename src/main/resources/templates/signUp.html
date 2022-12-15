@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,9 +8,9 @@
     <link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../static/css/login.css" type="text/css"/>   <!--/css/login.css -->
-    <link rel="stylesheet" href="../static/css/signUp.css" type="text/css"/>   <!--/css/signUp.css -->
-    <title>Title</title>
+    <link rel="stylesheet" href="/css/login.css" type="text/css"/>
+    <link rel="stylesheet" href="/css/signUp.css" type="text/css"/>
+    <title>북적북적 :: book을 jeok는 공간</title>
 </head>
 <body>
 
@@ -24,45 +24,50 @@
             <h1 class="title">Sign Up</h1>
           </div>
         </div>
-        <form action="" method="post" name="sign-up" class="form-horizontal">
+
+        <form th:action="@{/sign-up}" method="post" th:object="${userAccountDto}" class="form-horizontal">
 
           <div class="form-group">
-            <label for="name" class="cols-sm-2 control-label">Your Name</label>
+            <label th:for="name" class="cols-sm-2 control-label">Your Name</label>
             <div class="cols-sm-10">
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                <input type="text" class="form-control" name="name" id="name"  placeholder="Enter your Name"/>
+                <input type="text" th:field="*{name}" class="form-control" placeholder="Enter your Name"/>
               </div>
+              <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="email" class="cols-sm-2 control-label">Your Email</label>
+            <label th:for="email" class="cols-sm-2 control-label">Your Email</label>
             <div class="cols-sm-10">
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
-                <input type="text" class="form-control" name="email" id="email"  placeholder="Enter your Email"/>
+                <input type="text" th:field="*{email}" class="form-control" placeholder="Enter your Email"/>
               </div>
+              <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError"></p>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="username" class="cols-sm-2 control-label">Username</label>
+            <label th:for="nickname" class="cols-sm-2 control-label">User NickName</label>
             <div class="cols-sm-10">
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
-                <input type="text" class="form-control" name="username" id="username"  placeholder="Enter your Username"/>
+                <input type="text" th:field="*{nickname}" class="form-control"  placeholder="Enter your Username"/>
               </div>
+              <p th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="fieldError"></p>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="password" class="cols-sm-2 control-label">Password</label>
+            <label th:for="userPassword" class="cols-sm-2 control-label">Password</label>
             <div class="cols-sm-10">
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                <input type="password" class="form-control" name="password" id="password"  placeholder="Enter your Password"/>
+                <input type="password" th:field="*{userPassword}" class="form-control"  placeholder="Enter your Password"/>
               </div>
+              <p th:if="${#fields.hasErrors('userPassword')}" th:errors="*{userPassword}" class="fieldError"></p>
             </div>
           </div>
 
@@ -71,13 +76,13 @@
             <div class="cols-sm-10">
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                <input type="password" class="form-control" name="confirm" id="confirm"  placeholder="Confirm your Password"/>
+                <input type="password" class="form-control" id="confirm"  placeholder="Confirm your Password"/>
               </div>
             </div>
           </div>
 
           <div class="fcol-md-12 text-center ">
-            <button type="button" class="btn btn-block mybtn btn-primary tx-tfm">Register</button>
+            <button type="submit" class="btn btn-block mybtn btn-primary tx-tfm">Register</button>
           </div>
 
           <div class="col-md-12 ">
