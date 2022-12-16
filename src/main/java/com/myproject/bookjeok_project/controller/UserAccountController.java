@@ -10,9 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,14 +27,13 @@ public class UserAccountController {
 
     @PostMapping("/sign-up")
     public String signUp(@Valid UserAccountDto userAccountDto, BindingResult bindingResult, Model model) {
-        System.out.println(userAccountDto.toString());
         if (bindingResult.hasErrors()) {
             return "signUp";
         }
-
         try {
             UserAccount account = UserAccount.createAccount(userAccountDto, passwordEncoder);
-            userAccountService.saveAccount(account);
+            UserAccount savedAccount = userAccountService.saveAccount(account);
+
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "signUp";
@@ -45,6 +42,15 @@ public class UserAccountController {
         return "redirect:/";
     }
 
+    @PostMapping("/sign-up/check")
+    @ResponseBody
+    public String duplicateCheck(@RequestBody UserAccount userAccount) {
+        if (userAccount.getEmail() != null) {
+            return userAccountService.validateDuplicateEmail(userAccount);
+        } else if (userAccount.getNickname() != null) {
+            return userAccountService.validateDuplicateNickname(userAccount);
+        }
+        return "";
+    }
 
-    
 }

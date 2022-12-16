@@ -14,15 +14,23 @@ public class UserAccountService {
     private final UserAccountRepository userAccountRepository;
 
     public UserAccount saveAccount(UserAccount userAccount) {
-        ValidateDuplicateEmail(userAccount);
-
         return userAccountRepository.save(userAccount);
     }
 
-    private void ValidateDuplicateEmail(UserAccount userAccount) {
+    public String validateDuplicateEmail(UserAccount userAccount) {
         UserAccount findAccount = userAccountRepository.findByEmail(userAccount.getEmail());
         if (findAccount != null) {
-            throw new IllegalStateException("이미 가입된 회원입니다.");
+            return "1";
+        } else {
+            return "2";
+        }
+    }
+    public String validateDuplicateNickname(UserAccount userAccount) {
+        UserAccount findAccount = userAccountRepository.findByNickname(userAccount.getNickname());
+        if (findAccount != null) {
+            return "3";
+        } else {
+            return "4";
         }
     }
 }
