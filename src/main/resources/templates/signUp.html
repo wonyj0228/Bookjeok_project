@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/css/login.css" type="text/css"/>
-    <link rel="stylesheet" href="/css/signUp.css" type="text/css"/>
-    <title>북적북적 :: book을 jeok는 공간</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/login.css" type="text/css"/>
+  <link rel="stylesheet" href="/css/signUp.css" type="text/css"/>
+  <title>북적북적 :: book을 jeok는 공간</title>
 </head>
 <body>
-
 <div class="container">
   <div class="row">
     <div class="col-md-6 mx-auto">
@@ -44,8 +46,9 @@
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
                 <input type="text" th:field="*{email}" class="form-control" placeholder="Enter your Email"/>
+                <input id="email-button" type="button" onclick="duplicateCheck(this);" value="중복확인" class="btn btn-primary btn-check">
               </div>
-              <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError"></p>
+              <p id="email-field" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError"></p>
             </div>
           </div>
 
@@ -55,6 +58,7 @@
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
                 <input type="text" th:field="*{nickname}" class="form-control"  placeholder="Enter your Username"/>
+                <input id="nickname-button" type="button" onclick="duplicateCheck(this);" value="중복확인" class="btn btn-primary btn-check">
               </div>
               <p th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="fieldError"></p>
             </div>
@@ -101,5 +105,47 @@
   </div>
 </div>
 
+<script th:inline="javascript">
+  const token = $("meta[name='_csrf']").attr("content")
+  const header = $("meta[name='_csrf_header']").attr("content");
+
+
+  function duplicateCheck(args) {
+    let id = $(args).attr("id");
+    let data;
+    if (id === "email-button" ) {
+      data = { "email" : $("#email").val() };
+    } else if (id === "nickname-button" ) {
+      data = { "nickname" : $("#nickname").val() };
+    }
+
+    $.ajax({
+      type : "POST"
+      ,url : "/sign-up/check"
+      ,data : JSON.stringify(data)
+      ,dataType : 'text' // ajax result datatype
+      ,contentType : "application/json; charset=utf-8" // ajax request type
+      ,beforeSend : function(xhr) { //spring security post + ajax 사용시 반드시 필요한 작업
+        xhr.setRequestHeader(header, token);
+      }
+      , error : function(error) {
+        console.log(error)
+      }
+    }).done(function(result) {
+      console.log(result)
+      if (result === "1") {
+        $("#email-field").attr(value, "이미 사용중인 이메일 입니다.");
+        $("#email").attr(value, "");
+      } else if (result === "2") {
+        alert("사용 가능한 이메일 입니다.");
+      } else if (result === "3") {
+        $("#nickname-field").attr(value, "이미 사용중인 닉네임 입니다.");
+        $("#nickname").attr(value, "");
+      } else if (result === "4") {
+        alert("사용 가능한 닉네임 입니다.");
+      }
+    });
+  }
+</script>
 </body>
 </html>
