@@ -18,11 +18,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests().anyRequest().permitAll() // TODO : 메인페이지, login, signIn만 permitAll
                 .and()
                 .csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-//                .and()
-//                .formLogin()
-//                .loginPage("/login")
-//                .defaultSuccessUrl("/index");
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/");
 
         return http.build();
     }

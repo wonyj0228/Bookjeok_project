@@ -39,7 +39,7 @@ public class UserAccountController {
             return "signUp";
         }
 
-        return "redirect:/";
+        return "redirect:login"; // TODO : 회원가입 완료창이 있으면 좋을 듯 or alert 창이라도 띄우기
     }
 
     @PostMapping("/sign-up/check")
