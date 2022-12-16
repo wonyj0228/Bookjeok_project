@@ -27,7 +27,7 @@
           </div>
         </div>
 
-        <form th:action="@{/sign-up}" method="post" th:object="${userAccountDto}" class="form-horizontal">
+        <form th:action="@{/sign-up}" method="post" th:object="${userAccountDto}" class="form-horizontal" onsubmit="return register()">
 
           <div class="form-group">
             <label th:for="name" class="cols-sm-2 control-label">Your Name</label>
@@ -46,7 +46,7 @@
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
                 <input type="text" th:field="*{email}" class="form-control" placeholder="Enter your Email"/>
-                <input id="email-button" type="button" onclick="duplicateCheck(this);" value="중복확인" class="btn btn-primary btn-check">
+                <input id="email-button" type="button" onclick="duplicateCheck(this);" data-check="false" value="중복확인" class="btn btn-primary btn-check">
               </div>
               <p id="email-field" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError"></p>
             </div>
@@ -58,7 +58,7 @@
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
                 <input type="text" th:field="*{nickname}" class="form-control"  placeholder="Enter your Username"/>
-                <input id="nickname-button" type="button" onclick="duplicateCheck(this);" value="중복확인" class="btn btn-primary btn-check">
+                <input id="nickname-button" type="button" onclick="duplicateCheck(this);" data-check="false" value="중복확인" class="btn btn-primary btn-check">
               </div>
               <p th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="fieldError"></p>
             </div>
@@ -80,13 +80,14 @@
             <div class="cols-sm-10">
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                <input type="password" class="form-control" id="confirm"  placeholder="Confirm your Password"/>
+                <input type="password" class="form-control" id="confirm" data-check="false" placeholder="Confirm your Password"/>
               </div>
+              <p id="confirm-error" class="fieldError"></p>
             </div>
           </div>
 
           <div class="fcol-md-12 text-center ">
-            <button type="submit" class="btn btn-block mybtn btn-primary tx-tfm">Register</button>
+            <button type="submit" class="btn btn-block mybtn btn-primary tx-tfm" >Register</button>
           </div>
 
           <div class="col-md-12 ">
@@ -97,7 +98,7 @@
           </div>
           <div class="login-register">
             <a href="#">Login</a>
-            <a href="#">home</a>
+            <a href="/">home</a>
           </div>
         </form>
       </div>
@@ -109,7 +110,56 @@
   const token = $("meta[name='_csrf']").attr("content")
   const header = $("meta[name='_csrf_header']").attr("content");
 
+  // ----비밀번호 입력 확인----
+  $("#confirm").keyup(function() {
+    let passwordVal = $("#userPassword").val();
+    let confirmVal = $("#confirm").val();
 
+    validatePassword(passwordVal, confirmVal);
+  });
+
+  $("#userPassword").change(function() {
+    let passwordVal = $("#userPassword").val();
+    let confirmVal = $("#confirm").val();
+
+    validatePassword(passwordVal, confirmVal);
+  });
+
+  function validatePassword(password1, password2){
+    if(password1 != password2) {
+      $("#confirm-error").text("비밀번호가 동일하지 않습니다.");
+      $("#confirm-error").attr("data-check", "false")
+    }
+    else {
+      $("#confirm-error").text('');
+      $("#confirm-error").attr("data-check", "true")
+    }
+  }
+  // ----등록 전 중복검사 + 비밀번호 일치 확인----
+  function register() {
+    if ($("#email-button").attr("data-check") === "false") {
+      alert("이메일 중복체크가 완료되지 않았습니다.");
+      return false;
+    }
+    if ($("#nickname-button").attr("data-check") === "false") {
+      alert("닉네임 중복체크가 완료되지 않았습니다.");
+      return false;
+    }
+    if ($("#confirm-error").attr("data-check") === "false") {
+      alert("비밀번호를 확인해주세요.");
+      return false;
+    }
+  }
+
+  // ----중복확인 후 데이터 변경관리----
+  $("#email").change(function() {
+    $("#email-button").attr("data-check", "false");
+  });
+  $("#nickname").change(function() {
+    $("#nickname-button").attr("data-check", "false");
+  });
+
+  // ----중복확인 이벤트처리 ajax ----
   function duplicateCheck(args) {
     let id = $(args).attr("id");
     let data;
@@ -132,16 +182,23 @@
         console.log(error)
       }
     }).done(function(result) {
-      console.log(result)
+
       if (result === "1") {
-        $("#email-field").attr(value, "이미 사용중인 이메일 입니다.");
-        $("#email").attr(value, "");
+        $("#email").val("");
+        $("#email-button").attr("data-check", "false");
+        alert("이미 사용중인 이메일 입니다.");
+
       } else if (result === "2") {
+        $("#email-button").attr("data-check", "true");
         alert("사용 가능한 이메일 입니다.");
+
       } else if (result === "3") {
-        $("#nickname-field").attr(value, "이미 사용중인 닉네임 입니다.");
-        $("#nickname").attr(value, "");
+        $("#nickname").val("");
+        $("#nickname-button").attr("data-check", "false");
+        alert("이미 사용중인 닉네임 입니다.");
+
       } else if (result === "4") {
+        $("#nickname-button").attr("data-check", "true");
         alert("사용 가능한 닉네임 입니다.");
       }
     });
